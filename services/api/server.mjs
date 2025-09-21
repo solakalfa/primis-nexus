@@ -6,6 +6,16 @@ import { migrate, pingDb } from './src/db.mjs';
 import { cfg } from './src/config.mjs';
 
 const app = express();
+// --- CORS minimal ---
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
+  if (req.method === 'OPTIONS') return res.sendStatus(204);
+  next();
+});
+// --- /CORS ---
+
 const logger = pino();
 
 app.use((req, _res, next) => { req.log = logger; next(); });
