@@ -7,6 +7,9 @@ import { migrate, pingDb } from './src/db.mjs';
 import { cfg } from './src/config.mjs';
 
 const app = express();
+app.use(cors({ origin: true, methods: ['GET','POST','OPTIONS'], allowedHeaders: ['Content-Type'] }));
+app.options('*', cors());
+
 // --- CORS minimal ---
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
