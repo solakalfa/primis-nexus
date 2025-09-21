@@ -26,6 +26,16 @@ app.get('/api/health', async (_req, res) => {
     }
   });
 });
+// latency + traceId monitor
+app.use((req, res, next) => {
+  const t0 = process.hrtime.bigint();
+  res.on('finish', () => {
+    const ms = Number(process.hrtime.bigint() - t0) / 1e6;
+    res.setHeader('x-response-time', ms.toFixed(2));
+    req.log.info({ path: req.path, method: req.method, ms: +ms.toFixed(2) }, 'req_done');
+  });
+  next();
+});
 
 app.use('/api', eventsRoute);
 app.use('/api', reportsRoute);
