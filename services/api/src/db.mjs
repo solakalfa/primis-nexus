@@ -59,3 +59,31 @@ export async function pingDb() {
   }
   return true;
 }
+
+export async function reportEvents() {
+  if (MODE === 'pg') {
+    const { rows } = await pool.query(
+      `SELECT click_id, COUNT(*) as count, MAX(created_at) as last_seen
+       FROM events GROUP BY click_id ORDER BY count DESC LIMIT 50`
+    );
+    return rows;
+  }
+  // MEM mode
+  const map = new Map();
+  for (const ev of mem.events) {
+    if (!ev.click_id) continue;
+    const entry = map.get(ev.click_id) || { click_id: ev.click_id, count: 0, last_seen: ev.created_at };
+    entry.count += 1;
+    if (ev.created_at > entry.last_seen) entry.last_seen = ev.created_at;
+    map.set(ev.click_id, entry);
+  }
+  return Array.from(map.values());
+}
+
+export async function reportSummary() {
+  if (MODE === 'pg') {
+    const { rows } = await pool.query(`SELECT COUNT(*)::int as total FROM events`);
+    return { total: rows[0].total };
+  }
+  return { total: mem.events.length };
+}
