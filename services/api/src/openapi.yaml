@@ -67,3 +67,40 @@ paths:
                     properties:
                       total: { type: integer }
                   traceId: { type: string }
+  /api/reports/events:
+    get:
+      summary: Aggregate events by click_id
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        click_id:  { type: string, nullable: true }
+                        count:     { type: integer }
+                        last_seen: { type: string, format: date-time }
+                  traceId: { type: string }
+
+  /api/reports/summary:
+    get:
+      summary: Events summary
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  summary:
+                    type: object
+                    properties:
+                      total: { type: integer }
+                  traceId: { type: string }
