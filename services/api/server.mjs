@@ -67,6 +67,7 @@ app.use('/api', eventsRouter);
 // Start server — use PORT from env if available
 const PORT = Number(process.env.PORT || cfg.port);
 
+const PORT = Number(process.env.PORT || (cfg?.port ?? 8080));
 app.listen(PORT, async () => {
   await migrate();
   logger.info({ port: PORT, mode: cfg.mode }, 'Primis Nexus API listening');
