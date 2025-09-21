@@ -53,4 +53,22 @@ router.get('/events', async (_req, res) => {
   }
 });
 
+// אם יש querystring עם payload, לשמור אותו כאירוע
+router.get('/events', async (req, res) => {
+  if (req.query.payload) {
+    try {
+      const payload = JSON.parse(req.query.payload);
+      const click_id = req.query.click_id || `cid-${Date.now()}`;
+      // שמירה ל־DB (כמו ב־POST)
+      await db.insertEvent({ click_id, payload });
+      return res.json({ ok: true, saved: true });
+    } catch(e) {
+      return res.status(400).json({ ok:false, error: e.message });
+    }
+  }
+  // אחרת: להחזיר את הרשומות כמו היום
+  const items = await db.listEvents();
+  res.json({ items });
+});
+
 export default router;
