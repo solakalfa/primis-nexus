@@ -19,10 +19,7 @@ function softRateLimit(ip) {
   const now = Date.now();
   const minute = Math.floor(now / 60000);
   const entry = rl.get(ip) || { count: 0, tsMinute: minute };
-  if (entry.tsMinute !== minute) {
-    entry.count = 0;
-    entry.tsMinute = minute;
-  }
+  if (entry.tsMinute !== minute) { entry.count = 0; entry.tsMinute = minute; }
   entry.count += 1;
   rl.set(ip, entry);
   return entry.count > ratePerMin;
@@ -31,10 +28,8 @@ function softRateLimit(ip) {
 // POST /api/events
 router.post('/events', async (req, res) => {
   const traceId = uuidv4();
-  const ip = (req.ip || req.headers['x-forwarded-for'] || 'unknown') as string;
-  if (softRateLimit(ip)) {
-    return res.status(429).json({ error: 'rate_limited', traceId });
-  }
+  const ip = String(req.ip || req.headers['x-forwarded-for'] || 'unknown');
+  if (softRateLimit(ip)) return res.status(429).json({ error: 'rate_limited', traceId });
 
   const parse = EventSchema.safeParse(req.body);
   if (!parse.success) {
@@ -52,16 +47,14 @@ router.post('/events', async (req, res) => {
 });
 
 // GET /api/events
-// - אם יש payload בשורת השאילתה: נשמור אירוע (pixel / noscript)
-// - אחרת: נחזיר רשימת אירועים
+// - אם יש payload ב-querystring: שומר אירוע (pixel / noscript)
+// - אחרת: מחזיר רשימת אירועים
 router.get('/events', async (req, res) => {
   const traceId = uuidv4();
 
-  if (req.query?.payload) {
-    const ip = (req.ip || req.headers['x-forwarded-for'] || 'unknown') as string;
-    if (softRateLimit(ip)) {
-      return res.status(429).json({ error: 'rate_limited', traceId });
-    }
+  if (req.query && req.query.payload) {
+    const ip = String(req.ip || req.headers['x-forwarded-for'] || 'unknown');
+    if (softRateLimit(ip)) return res.status(429).json({ error: 'rate_limited', traceId });
 
     try {
       const payload = JSON.parse(String(req.query.payload));
@@ -74,7 +67,7 @@ router.get('/events', async (req, res) => {
       await insertEvent({ id, click_id, payload: pl });
       return res.json({ ok: true, saved: true, id, traceId });
     } catch (e) {
-      return res.status(400).json({ ok: false, error: (e as Error).message, traceId });
+      return res.status(400).json({ ok: false, error: String(e && e.message || e), traceId });
     }
   }
 
