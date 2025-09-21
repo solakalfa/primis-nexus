@@ -26,14 +26,20 @@ app.get('/api/health', async (_req, res) => {
     }
   });
 });
-// latency + traceId monitor
+
+// latency header + log (safe: set header BEFORE sending the response)
 app.use((req, res, next) => {
-  const t0 = process.hrtime.bigint();
-  res.on('finish', () => {
-    const ms = Number(process.hrtime.bigint() - t0) / 1e6;
-    res.setHeader('x-response-time', ms.toFixed(2));
-    req.log.info({ path: req.path, method: req.method, ms: +ms.toFixed(2) }, 'req_done');
-  });
+  const start = process.hrtime.bigint();
+  const _end = res.end;
+  res.end = function (chunk, encoding, cb) {
+    try {
+      const ms = Number(process.hrtime.bigint() - start) / 1e6;
+      // header לפני השליחה (עדיין לא נשלחה התגובה כי אנחנו בתוך end המקורי)
+      res.setHeader('x-response-time', ms.toFixed(2));
+      req.log.info({ path: req.path, method: req.method, ms: +ms.toFixed(2) }, 'req_done');
+    } catch {}
+    return _end.call(this, chunk, encoding, cb);
+  };
   next();
 });
 
