@@ -1,3 +1,53 @@
+openapi: 3.0.3
+info:
+  title: Primis Nexus API
+  version: 0.1.0
+
+paths:
+  /api/health:
+    get:
+      summary: Health
+      responses:
+        '200': { description: OK }
+
+  /api/events:
+    post:
+      summary: Create event
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                click_id: { type: string }
+                payload:  { type: object }
+              required: [payload]
+      responses:
+        '201': { description: Created }
+        '422': { description: Validation error }
+        '429': { description: Rate limited }
+    get:
+      summary: List events (last 50)
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:         { type: string }
+                        click_id:   { type: string, nullable: true }
+                        payload:    { type: object }
+                        created_at: { type: string, format: date-time }
+                  traceId: { type: string }
+
   /api/reports/events:
     get:
       summary: Aggregate events by click_id
