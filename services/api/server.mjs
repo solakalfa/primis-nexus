@@ -1,3 +1,4 @@
+import cors from 'cors';
 import express from 'express';
 import pino from 'pino';
 import eventsRoute from './routes/api/events.mjs';
