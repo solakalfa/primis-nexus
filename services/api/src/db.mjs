@@ -87,3 +87,85 @@ export async function reportSummary() {
   }
   return { total: mem.events.length };
 }
+
+// === helper for T-Convert Join ===
+export async function findEventByClickId(click_id) {
+  if (!click_id) return null;
+  if (MODE === 'pg') {
+    const { rows } = await pool.query(
+      `SELECT * FROM events WHERE click_id = $1 ORDER BY created_at DESC LIMIT 1`,
+      [click_id]
+    );
+    return rows[0] || null;
+  } else {
+    const arr = (mem.events || []).filter(e => e.click_id === click_id);
+    return arr.sort((a,b) => (a.created_at||'') < (b.created_at||'') ? 1 : -1)[0] || null;
+  }
+}
+
+// === helper for T-Convert Join ===
+export async function upsertConversion({ idempotency_key, click_id, value = 0, currency = 'USD' }) {
+  if (MODE === 'pg') {
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS conversions (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        idempotency_key TEXT UNIQUE NOT NULL,
+        click_id TEXT NOT NULL,
+        value NUMERIC DEFAULT 0,
+        currency TEXT DEFAULT 'USD',
+        created_at TIMESTAMPTZ DEFAULT now()
+      );
+    `);
+    const sql = `
+      INSERT INTO conversions (idempotency_key, click_id, value, currency)
+      VALUES ($1, $2, $3, $4)
+      ON CONFLICT (idempotency_key) DO UPDATE
+        SET click_id = EXCLUDED.click_id,
+            value = EXCLUDED.value,
+            currency = EXCLUDED.currency
+      RETURNING id, idempotency_key, click_id, value::float, currency, created_at;
+    `;
+    const { rows } = await pool.query(sql, [idempotency_key, click_id, value, currency]);
+    return rows[0];
+  } else {
+    if (!mem.conversions) mem.conversions = [];
+    const existing = mem.conversions.find(c => c.idempotency_key === idempotency_key);
+    if (existing) {
+      existing.click_id = click_id;
+      existing.value = value;
+      existing.currency = currency;
+      return existing;
+    }
+    const row = {
+      id: (globalThis.crypto?.randomUUID?.() ?? String(Date.now() + Math.random())),
+      idempotency_key, click_id, value, currency,
+      created_at: new Date().toISOString(),
+    };
+    mem.conversions.push(row);
+    return row;
+  }
+}
+// === T-Convert Join helpers ===
+export async function findEventByClickId(click_id) {
+  if (MODE === 'pg') {
+    const { rows } = await pool.query('SELECT * FROM events WHERE click_id =  ORDER BY created_at DESC LIMIT 1',[click_id]);
+    return rows[0] || null;
+  } else {
+    const arr = (mem.events || []).filter(e => e.click_id === click_id);
+    return arr.sort((a,b) => (a.created_at||'') < (b.created_at||'') ? 1 : -1)[0] || null;
+  }
+}
+export async function upsertConversion({ idempotency_key, click_id, value = 0, currency = 'USD' }) {
+  if (MODE === 'pg') {
+    await pool.query('CREATE TABLE IF NOT EXISTS conversions (id UUID PRIMARY KEY DEFAULT gen_random_uuid(), idempotency_key TEXT UNIQUE NOT NULL, click_id TEXT NOT NULL, value NUMERIC DEFAULT 0, currency TEXT DEFAULT \'USD\', created_at TIMESTAMPTZ DEFAULT now());');
+    const sql = 'INSERT INTO conversions (idempotency_key, click_id, value, currency) VALUES (,,,) ON CONFLICT (idempotency_key) DO UPDATE SET click_id = EXCLUDED.click_id, value = EXCLUDED.value, currency = EXCLUDED.currency RETURNING id, idempotency_key, click_id, value::float, currency, created_at;';
+    const { rows } = await pool.query(sql, [idempotency_key, click_id, value, currency]);
+    return rows[0];
+  } else {
+    const existing = mem.conversions.find(c => c.idempotency_key === idempotency_key);
+    if (existing) { existing.click_id = click_id; existing.value = value; existing.currency = currency; return existing; }
+    const row = { id: (globalThis.crypto?.randomUUID?.() ?? String(Date.now() + Math.random())), idempotency_key, click_id, value, currency, created_at: new Date().toISOString() };
+    mem.conversions.push(row);
+    return row;
+  }
+}

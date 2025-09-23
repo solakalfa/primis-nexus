@@ -4,6 +4,7 @@ import pinoHttp from 'pino-http';
 import bodyParser from 'body-parser';
 import { v4 as uuidv4 } from 'uuid';
 import eventsRouter from './routes/api/events.mjs';
+import convertRouter from './routes/api/convert.mjs';
 import { migrate } from './src/db.mjs';
 import cors from 'cors';
 
@@ -63,11 +64,11 @@ app.get('/api/health', (_req, res) => {
 });
 
 app.use('/api', eventsRouter);
+app.use('/api', convertRouter);
 
 // Start server — use PORT from env if available
-const PORT = Number(process.env.PORT || cfg.port);
 
-const PORT = Number(process.env.PORT || (cfg?.port ?? 8080));
+const PORT = Number(process.env.PORT || (cfg.port || 8080));
 app.listen(PORT, async () => {
   await migrate();
   logger.info({ port: PORT, mode: cfg.mode }, 'Primis Nexus API listening');
