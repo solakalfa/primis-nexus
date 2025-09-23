@@ -1,7 +1,8 @@
 import { Router } from 'express';
 import { z } from 'zod';
 import { v4 as uuidv4 } from 'uuid';
-import { upsertConversion, findEventByClickId } from '../../src/db.mjs';
+import { upsertConversion } from '../../src/conversions.mjs';
+import { listEvents } from '../../src/db.mjs';
 
 const router = Router();
 
@@ -16,9 +17,11 @@ router.post('/convert', async (req, res) => {
   const traceId = uuidv4();
   try {
     const parsed = ConvertSchema.parse(req.body || {});
-    const click = await findEventByClickId(parsed.click_id);
+    const all = await listEvents().catch(() => []);
+    const linked = Array.isArray(all) && all.some(e => e?.click_id === parsed.click_id);
+
     const conv = await upsertConversion(parsed);
-    return res.json({ ok: true, linked: Boolean(click), conversion: conv, traceId });
+    return res.json({ ok: true, linked, conversion: conv, traceId });
   } catch (e) {
     return res.status(422).json({ ok: false, error: String(e?.message || e), traceId });
   }
