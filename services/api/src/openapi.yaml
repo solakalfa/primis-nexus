@@ -85,3 +85,40 @@ paths:
                     properties:
                       total: { type: integer }
                   traceId: { type: string }
+
+
+  /api/convert:
+    post:
+      summary: Register a conversion and join to a click
+      operationId: convert
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [click_id, idempotency_key]
+              properties:
+                click_id: { type: string }
+                value: { type: number }
+                currency: { type: string, default: USD }
+                idempotency_key: { type: string }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok: { type: boolean }
+                  linked: { type: boolean }
+                  conversion:
+                    type: object
+                    properties:
+                      id: { type: string }
+                      click_id: { type: string }
+                      value: { type: number }
+                      currency: { type: string }
+                      created_at: { type: string, format: date-time }
+                  traceId: { type: string }
