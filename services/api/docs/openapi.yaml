@@ -1,0 +1,96 @@
+openapi: 3.0.3
+info:
+  title: Primis Nexus API
+  version: 0.1.0
+  description: |
+    Measurement/Attribution Hub — core API for events, conversions, destination flush, and reports.
+servers:
+  - url: https://primis-nexus-api.example.com
+paths:
+  /api/events:
+    post:
+      summary: Ingest click/event
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [click_id]
+              properties:
+                click_id: { type: string, description: "Unique click identifier" }
+                payload:  { type: object, additionalProperties: true }
+      responses:
+        '200':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok: { type: boolean }
+                  id: { type: string }
+  /api/convert:
+    post:
+      summary: Create conversion joined to an existing click
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [click_id, value, currency, idempotency_key]
+              properties:
+                click_id:         { type: string }
+                value:            { type: number }
+                currency:         { type: string, example: "USD" }
+                idempotency_key:  { type: string, description: "Also used as event_id for CAPI dedup" }
+      responses:
+        '200':
+          description: Created/Idempotent
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok: { type: boolean }
+                  conversion_id: { type: string }
+  /api/destinations/meta/flush:
+    post:
+      summary: Flush outbox to Meta Conversions API (CAPI)
+      description: |
+        Triggers sending queued events to Meta CAPI.
+        In production this endpoint is invoked by Cloud Scheduler (OIDC).
+      responses:
+        '200':
+          description: Flushed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok: { type: boolean }
+                  drained: { type: boolean }
+                  traceId: { type: string }
+  /api/reports/summary:
+    get:
+      summary: Summary report for recent activity
+      parameters:
+        - in: query
+          name: hours
+          schema: { type: integer, default: 24, minimum: 1 }
+          description: Time window to summarize
+      responses:
+        '200':
+          description: Summary JSON
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  summary:
+                    type: object
+                    additionalProperties: true
+                  traceId:
+                    type: string
+components: {}
