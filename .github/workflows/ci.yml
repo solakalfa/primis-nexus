@@ -1,0 +1,19 @@
+name: CI
+on:
+  pull_request: { branches: [ master ] }
+  push: { branches: [ master, 'feature/**', 'hotfix/**' ] }
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '18' }
+      - name: OpenAPI Sync Gate
+        run: bash scripts/check-openapi-sync.sh
+      - name: Lint (optional)
+        run: |
+          if [ -f package.json ]; then npm run -s lint || true; fi
+          if [ -d services/api ]; then cd services/api && npm run -s lint || true; fi
+      - name: Unit/Smoke (placeholder)
+        run: echo "Add supertest tests (health/convert/report)"
