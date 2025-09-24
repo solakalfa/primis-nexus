@@ -1,3 +1,5 @@
+import metrics from './middleware/metrics.mjs';
+import metricsReportRouter from './routes/api/metrics-report.mjs';
 import express from 'express';
 import pino from 'pino';
 import pinoHttp from 'pino-http';
@@ -16,6 +18,7 @@ const cfg = {
 
 const logger = pino({ level: process.env.LOG_LEVEL || 'info' });
 const app = express();
+app.use(metrics.requestTimer);
 
 // Middleware
 app.use(
@@ -65,6 +68,7 @@ app.get('/api/health', (_req, res) => {
 
 app.use('/api', eventsRouter);
 app.use('/api', convertRouter);
+app.use('/api', metricsReportRouter);
 
 // Start server — use PORT from env if available
 
