@@ -1,0 +1,23 @@
+name: Smoke (prod)
+
+on:
+  push:
+    branches: [ main, master, 'feature/*' ]
+  workflow_dispatch:
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Show API base
+        run: 'echo "$PNESUX_API_BASE"'
+        env:
+          PNESUX_API_BASE: ${{ secrets.PNESUX_API_BASE }}
+      - name: Health
+        run: 'curl -fsSL "$PNESUX_API_BASE/api/health"'
+        env:
+          PNESUX_API_BASE: ${{ secrets.PNESUX_API_BASE }}
+      - name: Flush (safe)
+        run: 'curl -fsSL -X POST "$PNESUX_API_BASE/api/destinations/meta/flush" -o /dev/null'
+        env:
+          PNESUX_API_BASE: ${{ secrets.PNESUX_API_BASE }}
