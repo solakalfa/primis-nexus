@@ -2,7 +2,7 @@
 > Source of truth committed to Git. AI mirrors from here.
 
 ## Repos
-- Primis.Nexus repo URL: <ADD_URL_HERE>
+- Primis.Nexus repo URL: https://github.com/solakalfa/primis-nexus.git\n- Primis.Nexus Site repo URL: https://github.com/solakalfa/primis-nexus-site.git
 
 ## GCP
 - Project ID: afs-rsoc-471907
