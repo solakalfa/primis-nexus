@@ -11,3 +11,8 @@ Source: code zips + current repo state
 - M5 — Scale Reporting & Optimization: Planned
 - M6 — Meta CAPI Worker              : Prototype (needs hardening)
 - M2.x Prefix v1: Deployed, legacy deprecated headers, internal Redoc v1 live on site. (Done)
+- ### M2.x Prefix v1 — DONE
+הוספנו prefix `/api/v1` לכל נקודות הקצה (events, convert, reports, health).  
+המטרה: יציבות ותיעוד אחיד ל־Tarzo ול־Primis, אפשרות להריץ פיילוטים בביטחון, ולבסס בסיס לסקיילינג עתידי (v2+).  
+Redoc פנימי (`/api-docs-v1`) מציג את הפונקציונליות שבוצעה בפועל. Legacy `/api` נשאר זמני עם Deprecation headers.
+
