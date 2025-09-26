@@ -1,0 +1,17 @@
+{
+  "name": "pn-articles-api-mvp",
+  "version": "0.1.0",
+  "type": "module",
+  "main": "server.mjs",
+  "scripts": {
+    "start": "node server.mjs"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "body-parser": "^1.20.2",
+    "morgan": "^1.10.0",
+    "uuid": "^9.0.1",
+    "fs-extra": "^11.2.0",
+    "dotenv": "^16.4.5"
+  }
+}

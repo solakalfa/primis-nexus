@@ -1,0 +1,106 @@
+{
+  "articles": {
+    "8efda3eb-f715-4f6e-b9b6-9ee304da3f12": {
+      "id": "8efda3eb-f715-4f6e-b9b6-9ee304da3f12",
+      "topic": "בדיקת פיילוט - מאמר 1",
+      "keywords": [
+        "בדיקה",
+        "פיילוט"
+      ],
+      "metadata": {},
+      "status": "published",
+      "created_at": "2025-09-26T06:13:05.741Z",
+      "draft": {
+        "title": "בדיקת פיילוט: מאמר ראשון",
+        "summary": "",
+        "body": "פתיח קצר למאמר הבדיקה.",
+        "tags": [
+          "בדיקה",
+          "פיילוט"
+        ]
+      },
+      "published": {
+        "slug": "בדיקת-פיילוט-מאמר-ראשון",
+        "file": "C:\\Users\\סטודיו סולה\\primis-nexus-site\\src\\content\\articles\\בדיקת-פיילוט-מאמר-ראשון.md",
+        "at": "2025-09-26T06:13:58.116Z"
+      }
+    },
+    "932c23c9-cbdd-4efd-82c9-14a466336d4d": {
+      "id": "932c23c9-cbdd-4efd-82c9-14a466336d4d",
+      "topic": "פיילוט: מאמר דרך API",
+      "keywords": [
+        "פיילוט",
+        "בדיקה"
+      ],
+      "metadata": {},
+      "status": "pending",
+      "created_at": "2025-09-26T06:59:24.038Z",
+      "draft": {
+        "title": "פיילוט: מאמר דרך API",
+        "summary": "",
+        "body": "תוכן מוביל קצר.",
+        "tags": [
+          "פיילוט",
+          "בדיקה"
+        ]
+      }
+    },
+    "24195ed4-7cd8-43e2-bbb3-7bbe9a74752d": {
+      "id": "24195ed4-7cd8-43e2-bbb3-7bbe9a74752d",
+      "topic": "מאמר API",
+      "keywords": [],
+      "metadata": {},
+      "status": "published",
+      "created_at": "2025-09-26T07:40:08.955Z",
+      "draft": {
+        "title": "מאמר API",
+        "summary": "",
+        "body": "פתיח קצר",
+        "tags": []
+      },
+      "published": {
+        "slug": "מאמר-api",
+        "file": "C:\\primis-site\\zapping-zero\\src\\content\\articles\\מאמר-api.md",
+        "at": "2025-09-26T07:40:40.000Z"
+      }
+    },
+    "7d80d4e6-645e-4b84-9843-27aa5735b15d": {
+      "id": "7d80d4e6-645e-4b84-9843-27aa5735b15d",
+      "topic": "בדיקת צינור תוכן",
+      "keywords": [],
+      "metadata": {},
+      "status": "published",
+      "created_at": "2025-09-26T11:24:50.598Z",
+      "draft": {
+        "title": "בדיקת צינור תוכן",
+        "summary": "",
+        "body": "# בדיקת צינור תוכן\n\nכתוב כאן את גוף המאמר...",
+        "tags": []
+      },
+      "published": {
+        "slug": "בדיקת-צינור-תוכן",
+        "file": "C:\\primis-site\\zapping-zero\\src\\content\\articles\\בדיקת-צינור-תוכן.md",
+        "at": "2025-09-26T11:56:35.865Z"
+      }
+    },
+    "936c1ea8-e3c1-489c-809c-6f1b9fe1b074": {
+      "id": "936c1ea8-e3c1-489c-809c-6f1b9fe1b074",
+      "topic": "בדיקת צינור תוכן",
+      "keywords": [],
+      "metadata": {},
+      "status": "published",
+      "created_at": "2025-09-26T11:26:55.788Z",
+      "draft": {
+        "title": "בדיקת צינור תוכן",
+        "summary": "",
+        "body": "# בדיקת צינור תוכן\n\nכתוב כאן את גוף המאמר...",
+        "tags": []
+      },
+      "published": {
+        "slug": "בדיקת-צינור-תוכן",
+        "file": "C:\\primis-site\\zapping-zero\\src\\content\\articles\\בדיקת-צינור-תוכן.md",
+        "at": "2025-09-26T11:47:38.013Z"
+      }
+    }
+  }
+}
